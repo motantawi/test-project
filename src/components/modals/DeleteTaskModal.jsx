@@ -1,16 +1,6 @@
+import { memo } from "react";
 import { Modal, Box, Typography, Button } from "@mui/material";
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  borderRadius: 2,
-  p: 4,
-};
 function DeleteTaskModal({ open, handleClose, handleDelete }) {
   return (
     <Modal
@@ -19,7 +9,19 @@ function DeleteTaskModal({ open, handleClose, handleDelete }) {
       aria-labelledby="delete-task-modal-title"
       aria-describedby="delete-task-modal-description"
     >
-      <Box sx={style}>
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: 400,
+          bgcolor: "background.paper",
+          boxShadow: 24,
+          borderRadius: 2,
+          p: 4,
+        }}
+      >
         <Typography id="delete-task-modal-title" variant="h6" component="h2">
           Confirm Delete
         </Typography>
@@ -42,4 +44,4 @@ function DeleteTaskModal({ open, handleClose, handleDelete }) {
   );
 }
 
-export default DeleteTaskModal;
+export default memo(DeleteTaskModal);

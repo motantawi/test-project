@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import {
   Container,
   Button,
@@ -9,6 +9,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Grid,
 } from "@mui/material";
 import useUser from "../../hooks/useUser";
 import AddTodoModal from "../../components/modals/AddTodoModal";
@@ -25,30 +26,34 @@ function Todos() {
   const [dueDateFilter, setDueDateFilter] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const loadTasks = async () => {
+  const loadTasks = useCallback(async () => {
     if (user) {
       const fetchedTasks = await fetchTasks(user.id);
       setAllTasks(fetchedTasks);
     }
-  };
+  }, [user]);
+
   useEffect(() => {
     loadTasks();
-  }, []);
+  }, [loadTasks]);
 
-  const resetFilters = () => {
+  const resetFilters = useCallback(() => {
     setSortOrder("asc");
     setStatusFilter("");
     setPriorityFilter("");
     setDueDateFilter("");
-  };
+  }, []);
 
-  const handleSearchChange = (event) => {
-    const { value } = event.target;
-    if (value && !searchTerm) {
-      resetFilters();
-    }
-    setSearchTerm(value);
-  };
+  const handleSearchChange = useCallback(
+    (event) => {
+      const { value } = event.target;
+      if (value && !searchTerm) {
+        resetFilters();
+      }
+      setSearchTerm(value);
+    },
+    [resetFilters, searchTerm]
+  );
 
   const tasks = useMemo(() => {
     return allTasks
@@ -75,30 +80,30 @@ function Todos() {
     searchTerm,
   ]);
 
-  const handleDeleteTask = async (taskId) => {
+  const handleDeleteTask = useCallback(async (taskId) => {
     await deleteTask(taskId);
     setAllTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
-  };
+  }, []);
 
-  const handleToggleTaskStatus = async (taskId) => {
+  const handleToggleTaskStatus = useCallback(async (taskId) => {
     await toggleTaskStatus(taskId);
     setAllTasks((prevTasks) =>
       prevTasks.map((task) =>
         task.id === taskId ? { ...task, status: !task.status } : task
       )
     );
-  };
+  }, []);
 
   return (
     <Container maxWidth="lg" sx={{ mt: 5 }}>
-      <Typography variant="h4" gutterBottom textAlign={"center"}>
+      <Typography variant="h4" gutterBottom textAlign={"center"} sx={{ mb: 4 }}>
         Welcome Back, {user?.firstName} {user?.lastName}
       </Typography>
       <Stack
-        direction="row"
+        direction={{ xs: "column", sm: "row" }}
         mb={2}
-        justifyContent="left"
-        flexWrap={"wrap"}
+        justifyContent="center"
+        flexWrap="wrap"
         gap={2}
       >
         <TextField
@@ -163,20 +168,25 @@ function Todos() {
         handleClose={() => setOpenModal(false)}
         fetchTasks={loadTasks}
       />
-      {tasks.length > 0 ? (
-        tasks.map((task) => (
-          <TaskCard
-            key={task.id}
-            task={task}
-            toggleTaskStatus={() => handleToggleTaskStatus(task.id)}
-            deleteTask={() => handleDeleteTask(task.id)}
-          />
-        ))
-      ) : (
-        <Typography variant="h4" mt={5} textAlign={"center"} gutterBottom>
-          No Tasks To Display
-        </Typography>
-      )}
+      <Grid container spacing={2}>
+        {tasks.length > 0 ? (
+          tasks.map((task) => (
+            <Grid item xs={12} sm={6} key={task.id}>
+              <TaskCard
+                task={task}
+                toggleTaskStatus={() => handleToggleTaskStatus(task.id)}
+                deleteTask={() => handleDeleteTask(task.id)}
+              />
+            </Grid>
+          ))
+        ) : (
+          <Grid item xs={12}>
+            <Typography variant="h5" textAlign="center">
+              No Tasks To Display
+            </Typography>
+          </Grid>
+        )}
+      </Grid>
     </Container>
   );
 }

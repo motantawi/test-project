@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
@@ -14,10 +14,12 @@ import { loginSchema } from "../../utils/Schema";
 import { requestLogin } from "../../api/auth";
 import { IconButton, InputAdornment, TextField } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-export default function SignIn() {
+
+const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const { user, setUser } = useUser();
   const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -31,33 +33,34 @@ export default function SignIn() {
     },
   });
 
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
+  const handleClickShowPassword = useCallback(() => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  }, []);
 
-  // Prevent the default action of the mouse down event (focus shifting)
-  const handleMouseDownPassword = (event) => {
+  const handleMouseDownPassword = useCallback((event) => {
     event.preventDefault();
-  };
+  }, []);
 
-  const handleLogin = async ({ email, password }) => {
-    try {
-      const userData = await requestLogin({ email, password });
-      setUser(userData);
-      toast.success("Logged in successfully");
-      navigate("/todos");
-    } catch (error) {
-      console.error("Error during sign in:", error.message);
-      toast.error("Invalid email or password");
-    }
-  };
+  const handleLogin = useCallback(
+    async ({ email, password }) => {
+      try {
+        const userData = await requestLogin({ email, password });
+        setUser(userData);
+        toast.success("Logged in successfully");
+        navigate("/todos");
+      } catch (error) {
+        console.error("Error during sign in:", error.message);
+        toast.error("Invalid email or password");
+      }
+    },
+    [navigate, setUser]
+  );
 
   useEffect(() => {
     if (user !== null) {
       navigate("/todos");
     }
-  }, []);
-
+  }, [user, navigate]);
   return (
     <>
       <Container component="main" maxWidth="md">
@@ -93,6 +96,7 @@ export default function SignIn() {
             py: 5,
             maxWidth: 380,
             mx: "auto",
+            mb: 3,
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
@@ -174,4 +178,6 @@ export default function SignIn() {
       </Container>
     </>
   );
-}
+};
+
+export default SignIn;

@@ -16,7 +16,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
-import { useState } from "react";
+import { memo, useState } from "react";
 import DeleteTaskModal from "./modals/DeleteTaskModal";
 import { useNavigate } from "react-router-dom";
 
@@ -27,11 +27,18 @@ const TaskCard = ({ task, toggleTaskStatus, deleteTask }) => {
   return (
     <>
       <Card
+        variant="outlined"
         sx={{
           mb: 3,
           mt: 3,
-          bgcolor: "background.paper",
           boxShadow: 3,
+          border: 1.5,
+          borderColor:
+            task.priority === "high"
+              ? "red"
+              : task.priority === "medium"
+              ? "orange"
+              : "green",
           borderRadius: 2,
           transition: "0.3s",
           "&:hover": {
@@ -83,7 +90,7 @@ const TaskCard = ({ task, toggleTaskStatus, deleteTask }) => {
             </Box>
           </Box>
           {task.description && (
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            <Typography variant="" color="text.secondary" sx={{ mb: 2 }}>
               {task.description}
             </Typography>
           )}
@@ -139,4 +146,4 @@ const TaskCard = ({ task, toggleTaskStatus, deleteTask }) => {
   );
 };
 
-export default TaskCard;
+export default memo(TaskCard);

@@ -1,16 +1,16 @@
+import React, { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
-import { Suspense } from "react";
 import Loading from "./components/Loading";
 import RequireAuth from "./components/RequireAuth";
-import Todos from "./pages/Todos";
-import SignUp from "./pages/SignUp";
-import SignIn from "./pages/SignIn";
-import PageNotFound from "./pages/PageNotFound";
-import Home from "./pages/Home";
 import Navbar from "./components/Navbar";
-import EditTask from "./pages/Todos/EditTask";
-import Profile from "./pages/User";
+const Home = lazy(() => import("./pages/Home"));
+const Profile = lazy(() => import("./pages/User"));
+const Todos = lazy(() => import("./pages/Todos"));
+const EditTask = lazy(() => import("./pages/Todos/EditTask"));
+const SignIn = lazy(() => import("./pages/SignIn"));
+const SignUp = lazy(() => import("./pages/SignUp"));
+const PageNotFound = lazy(() => import("./pages/PageNotFound"));
 
 const App = () => {
   return (

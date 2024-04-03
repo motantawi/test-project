@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Box,
@@ -23,8 +23,6 @@ import { deleteTask, editTask, fetchTask } from "../../../api/tasks";
 function EditTask() {
   const { taskId } = useParams();
   const navigate = useNavigate();
-  const [status, setStatus] = useState(false);
-
   const {
     control,
     handleSubmit,
@@ -34,40 +32,37 @@ function EditTask() {
     resolver: yupResolver(createTaskSchema),
   });
 
-  const loadTaskData = async () => {
+  const loadTaskData = useCallback(async () => {
     try {
       const taskData = await fetchTask(taskId);
-      setValue("title", taskData.title);
-      setValue("description", taskData.description);
-      setValue("priority", taskData.priority);
-      setValue("dueDate", taskData.dueDate);
-      setValue("status", taskData.status);
+      const fields = ["title", "description", "priority", "dueDate", "status"];
+      fields.forEach((field) => setValue(field, taskData[field]));
     } catch (error) {
       console.error(error);
       toast.error(error.message);
       navigate("/");
     }
-  };
+  }, [navigate, taskId]);
 
   useEffect(() => {
     loadTaskData();
-  }, []);
+  }, [loadTaskData]);
 
-  const onSubmit = async (formData) => {
-    const dataToSend = {
-      ...formData,
-      status,
-    };
-    try {
-      await editTask(taskId, dataToSend);
-      toast.success("Task updated successfully");
-    } catch (error) {
-      console.error("Error updating task:", error);
-      toast.error("An error occurred while updating the task.");
-    }
-  };
+  const onSubmit = useCallback(
+    async (formData) => {
+      try {
+        await editTask(taskId, formData);
+        toast.success("Task updated successfully");
+        navigate("/todos");
+      } catch (error) {
+        console.error("Error updating task:", error);
+        toast.error("An error occurred while updating the task.");
+      }
+    },
+    [taskId, navigate]
+  );
 
-  const handleDelete = async () => {
+  const handleDelete = useCallback(async () => {
     try {
       await deleteTask(taskId);
       toast.success("Task deleted successfully");
@@ -76,7 +71,7 @@ function EditTask() {
       console.error("Error deleting task:", error);
       toast.error("An error occurred while deleting the task.");
     }
-  };
+  }, [taskId, navigate]);
 
   return (
     <Container maxWidth="md" sx={{ mt: 5 }}>
@@ -84,6 +79,7 @@ function EditTask() {
         component="form"
         noValidate
         autoComplete="off"
+        sx={{ mb: 3 }}
         onSubmit={handleSubmit(onSubmit)}
       >
         <Typography variant="h6" component="h2">
@@ -169,7 +165,6 @@ function EditTask() {
                   checked={value}
                   onChange={(e) => {
                     onChange(e.target.checked);
-                    setStatus(e.target.checked);
                   }}
                   onBlur={onBlur}
                   name={name}

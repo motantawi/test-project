@@ -1,3 +1,4 @@
+import React, { useState, useCallback, useEffect } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
@@ -9,13 +10,12 @@ import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { createAccountSchema } from "../../utils/Schema";
-import { useEffect, useState } from "react";
 import useUser from "../../hooks/useUser";
 import { requestCreateUser } from "../../api/auth";
 import { IconButton, InputAdornment, TextField } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-export default function SignUp() {
+const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
@@ -36,33 +36,37 @@ export default function SignUp() {
     },
   });
 
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
+  const handleClickShowPassword = useCallback(() => {
+    setShowPassword((prev) => !prev);
+  }, []);
 
-  const handleClickShowConfirmPassword = () => {
-    setShowConfirmPassword(!showConfirmPassword);
-  };
+  const handleClickShowConfirmPassword = useCallback(() => {
+    setShowConfirmPassword((prev) => !prev);
+  }, []);
 
-  const handleMouseDownPassword = (event) => {
+  const handleMouseDownPassword = useCallback((event) => {
     event.preventDefault();
-  };
+  }, []);
 
-  const handleCreateUser = async ({ firstName, lastName, email, password }) => {
-    try {
-      await requestCreateUser({ firstName, lastName, email, password });
-      toast.success("User created successfully");
-      navigate("/login");
-    } catch (error) {
-      console.error("Error during sign up:", error.message);
-    }
-  };
+  const handleCreateUser = useCallback(
+    async ({ firstName, lastName, email, password }) => {
+      try {
+        await requestCreateUser({ firstName, lastName, email, password });
+        toast.success("User created successfully");
+        navigate("/login");
+      } catch (error) {
+        console.error("Error during sign up:", error.message);
+        toast.error("An error occurred. Please try again.");
+      }
+    },
+    [navigate]
+  );
 
   useEffect(() => {
-    if (user !== null) {
+    if (user) {
       navigate("/todos");
     }
-  }, []);
+  }, [user, navigate]);
 
   return (
     <Container component="main" maxWidth="md">
@@ -97,6 +101,7 @@ export default function SignUp() {
           py: 5,
           maxWidth: 400,
           mx: "auto",
+          mb: 3,
         }}
       >
         <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
@@ -105,11 +110,12 @@ export default function SignUp() {
         <Typography component="h1" variant="h5">
           SignUp
         </Typography>
-        <form
-          onSubmit={handleSubmit(handleCreateUser)}
+        <Box
+          component="form"
           noValidate
           autoComplete="off"
-          style={{ width: "90%" }}
+          onSubmit={handleSubmit(handleCreateUser)}
+          sx={{ mt: 2, width: "90%" }}
         >
           <TextField
             label="First Name"
@@ -212,8 +218,10 @@ export default function SignUp() {
           >
             Have an account? Sign in
           </Typography>
-        </form>
+        </Box>
       </Box>
     </Container>
   );
-}
+};
+
+export default SignUp;

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   Container,
   TextField,
@@ -19,13 +19,12 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 const Profile = () => {
   const [cantEdit, setCantEdit] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
-
   const { user, setUser } = useUser();
+
   const {
     register,
     handleSubmit,
     reset,
-
     formState: { errors },
   } = useForm({
     resolver: yupResolver(changeUserDataSchema),
@@ -37,41 +36,50 @@ const Profile = () => {
     },
   });
 
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
+  const handleClickShowPassword = useCallback(() => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  }, []);
 
-  const handleMouseDownPassword = (event) => {
+  const handleMouseDownPassword = useCallback((event) => {
     event.preventDefault();
-  };
+  }, []);
 
-  const onSubmit = async (formData) => {
-    try {
-      const updatedUserData = await requestUpdateUserProfile(user.id, {
-        ...formData,
-        Password: formData.password,
-      });
-      setCantEdit(true);
-      setUser(updatedUserData);
-      toast.success("Profile updated successfully");
-    } catch (error) {
-      console.error("Error updating user profile:", error);
-      toast.error("An error occurred while updating the profile.");
-    }
-  };
+  const onSubmit = useCallback(
+    async (formData) => {
+      try {
+        const updatedUserData = await requestUpdateUserProfile(user.id, {
+          ...formData,
+          Password: formData.password,
+        });
+        setUser(updatedUserData);
+        toast.success("Profile updated successfully");
+        setCantEdit(true);
+      } catch (error) {
+        console.error("Error updating user profile:", error);
+        toast.error("An error occurred while updating the profile.");
+      }
+    },
+    [user.id, setUser]
+  );
+
+  const toggleEdit = useCallback(() => {
+    setCantEdit((prevCantEdit) => {
+      if (!prevCantEdit) {
+        reset();
+      }
+      return !prevCantEdit;
+    });
+  }, [reset]);
 
   return (
-    <Container maxWidth="md" sx={{ mt: 7 }}>
+    <Container maxWidth="md" sx={{ mt: 7, mb: 3 }}>
       <Typography variant="h4" color={"primary"} textAlign={"center"}>
         Edit Profile
       </Typography>
       <Button
         type="button"
         color={!cantEdit ? "error" : "primary"}
-        onClick={() => {
-          setCantEdit(!cantEdit);
-          !cantEdit ? reset() : null;
-        }}
+        onClick={toggleEdit}
         variant="outlined"
         sx={{ mt: 3, width: "100%" }}
       >

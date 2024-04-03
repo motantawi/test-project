@@ -1,3 +1,4 @@
+import { memo, useCallback } from "react";
 import {
   Box,
   TextField,
@@ -10,24 +11,12 @@ import {
   Typography,
   FormHelperText,
 } from "@mui/material";
-import useUser from "../../hooks/useUser.jsx";
-import { createTaskSchema } from "../../utils/Schema.jsx";
+import useUser from "../../hooks/useUser";
+import { createTaskSchema } from "../../utils/Schema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm, Controller } from "react-hook-form";
 import { toast } from "react-toastify";
-import { addTask } from "../../api/tasks.js";
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  borderRadius: 2,
-  p: 4,
-};
+import { addTask } from "../../api/tasks";
 
 function AddTodoModal({ open, handleClose, fetchTasks }) {
   const { user } = useUser();
@@ -40,34 +29,46 @@ function AddTodoModal({ open, handleClose, fetchTasks }) {
     resolver: yupResolver(createTaskSchema),
   });
 
-  const handleAddTask = async (data) => {
-    const { title, description, priority, dueDate } = data;
-    const newTask = {
-      title,
-      description,
-      priority,
-      dueDate,
-      userId: user.id,
-      status: false,
-    };
+  const handleAddTask = useCallback(
+    async (data) => {
+      try {
+        await addTask({
+          ...data,
+          userId: user.id,
+          status: false,
+        });
+        toast.success("Task added successfully");
+        fetchTasks();
+      } catch (error) {
+        console.error("Error adding task:", error);
+        toast.error(error.message);
+      } finally {
+        handleClose();
+        reset();
+      }
+    },
+    [user.id, fetchTasks, handleClose, reset]
+  );
 
-    try {
-      await addTask(newTask);
-      toast.success("Task added successfully");
-      fetchTasks();
-    } catch (error) {
-      console.error("Error adding task:", error);
-      toast.error("An error occurred while adding the task.");
-    }
-
+  const handleModalClose = useCallback(() => {
     reset();
     handleClose();
-  };
+  }, [reset, handleClose]);
 
   return (
-    <Modal open={open} onClose={handleClose}>
+    <Modal open={open} onClose={handleModalClose}>
       <Box
-        sx={style}
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: 400,
+          bgcolor: "background.paper",
+          boxShadow: 24,
+          borderRadius: 1,
+          p: 4,
+        }}
         component="form"
         noValidate
         autoComplete="off"
@@ -154,4 +155,4 @@ function AddTodoModal({ open, handleClose, fetchTasks }) {
   );
 }
 
-export default AddTodoModal;
+export default memo(AddTodoModal);
