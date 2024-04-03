@@ -6,10 +6,9 @@ This is a React-based project utilizing a modern technology stack, including Fir
 
 ## Project Overview
 
-The to-do list application is crafted to simplify task management and enhance productivity. It allows users to create, categorize, prioritize, and track tasks through an intuitive and accessible interface. Key features include:
+TodoList is a powerful tool designed to help you keep track of your daily tasks. With an easy-to-use interface, you can add, edit, and delete tasks as your priorities change throughout the day. Whether you’re managing work assignments, organizing personal projects, or planning your grocery list, TodoList makes it easy to stay on top of everything. Key features include:
 
 - **Task Management**: Users can add, edit, and delete tasks, enabling efficient task management.
-- **Categorization**: Tasks can be categorized for better organization, making it easier to manage different areas of life or work.
 - **Prioritization**: The application supports task prioritization, helping users focus on what's most important.
 - **Firebase Integration**: Utilizes Firebase for real-time database operations, ensuring that tasks are synced across devices.
 - **Responsive Design**: Leveraging Material UI, the interface is fully responsive and accessible across different devices and screen sizes.
