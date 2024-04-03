@@ -53,7 +53,7 @@ const requestUpdateUserProfile = async (
       firstName,
       lastName,
       email,
-      password,
+      ...(password && { password }),
     });
 
     const updatedUserSnap = await getDoc(userRef);
