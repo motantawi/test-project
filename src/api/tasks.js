@@ -29,7 +29,19 @@ const fetchTask = async (taskId) => {
 };
 
 const addTask = async (taskData) => {
-  await addDoc(collection(db, "todos"), taskData);
+  const { title } = taskData;
+  const tasksQuery = query(
+    collection(db, "todos"),
+    where("title", "==", title)
+  );
+
+  const querySnapshot = await getDocs(tasksQuery);
+
+  if (querySnapshot.empty) {
+    await addDoc(collection(db, "todos"), taskData);
+  } else {
+    throw Error("A task with the same title already exists.");
+  }
 };
 
 const editTask = async (taskId, taskData) => {
