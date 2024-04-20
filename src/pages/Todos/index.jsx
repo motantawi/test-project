@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Container,
   Button,
@@ -15,16 +16,41 @@ import useUser from "../../hooks/useUser";
 import AddTodoModal from "../../components/modals/AddTodoModal";
 import TaskCard from "../../components/TaskCard";
 import { deleteTask, fetchTasks, toggleTaskStatus } from "../../api/tasks";
+import queryString from "query-string";
 
 function Todos() {
+  const { parse, stringify } = queryString;
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useUser();
   const [allTasks, setAllTasks] = useState([]);
   const [openModal, setOpenModal] = useState(false);
-  const { user } = useUser();
-  const [sortOrder, setSortOrder] = useState("asc");
-  const [statusFilter, setStatusFilter] = useState("");
-  const [priorityFilter, setPriorityFilter] = useState("");
-  const [dueDateFilter, setDueDateFilter] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
+
+  const queryParams = parse(location.search);
+  const {
+    sortOrder = "asc",
+    statusFilter = "",
+    priorityFilter = "",
+    dueDateFilter = "",
+    searchTerm = "",
+  } = queryParams;
+
+  const updateFilters = (newFilters) => {
+    const mergedFilters = { ...queryParams, ...newFilters };
+    const nonDefaultFilters = {};
+    Object.entries(mergedFilters).forEach(([key, value]) => {
+      if (key === "sortOrder" && value !== "asc") {
+        nonDefaultFilters[key] = value;
+      } else if (value !== "") {
+        nonDefaultFilters[key] = value;
+      }
+    });
+
+    navigate({
+      pathname: location.pathname,
+      search: stringify(nonDefaultFilters),
+    });
+  };
 
   const loadTasks = useCallback(async () => {
     if (user) {
@@ -35,34 +61,37 @@ function Todos() {
 
   useEffect(() => {
     loadTasks();
-  }, [loadTasks]);
-
-  const resetFilters = useCallback(() => {
-    setSortOrder("asc");
-    setStatusFilter("");
-    setPriorityFilter("");
-    setDueDateFilter("");
-  }, []);
+  }, [loadTasks, location.search]);
 
   const handleSearchChange = useCallback(
     (event) => {
       const { value } = event.target;
-      if (value && !searchTerm) {
-        resetFilters();
+      if (value === "") {
+        navigate({
+          pathname: location.pathname,
+          search: "",
+        });
+      } else {
+        const newFilters = {
+          searchTerm: value,
+        };
+        navigate({
+          pathname: location.pathname,
+          search: stringify(newFilters),
+        });
       }
-      setSearchTerm(value);
     },
-    [resetFilters, searchTerm]
+    [navigate, location.pathname]
   );
 
   const tasks = useMemo(() => {
     return allTasks
       .filter((task) => {
         return (
-          (statusFilter === "" ||
+          (!statusFilter ||
             (statusFilter === "done" ? task.status : !task.status)) &&
-          (priorityFilter === "" || task.priority === priorityFilter) &&
-          (dueDateFilter === "" || task.dueDate === dueDateFilter) &&
+          (!priorityFilter || task.priority === priorityFilter) &&
+          (!dueDateFilter || task.dueDate === dueDateFilter) &&
           task.title.toLowerCase().includes(searchTerm.toLowerCase())
         );
       })
@@ -119,7 +148,7 @@ function Todos() {
           <Select
             value={sortOrder}
             label="Sort Order"
-            onChange={(e) => setSortOrder(e.target.value)}
+            onChange={(e) => updateFilters({ sortOrder: e.target.value })}
           >
             <MenuItem value="asc">Ascending</MenuItem>
             <MenuItem value="desc">Descending</MenuItem>
@@ -130,7 +159,7 @@ function Todos() {
           <Select
             value={statusFilter}
             label="Status"
-            onChange={(e) => setStatusFilter(e.target.value)}
+            onChange={(e) => updateFilters({ statusFilter: e.target.value })}
           >
             <MenuItem value="">All</MenuItem>
             <MenuItem value="done">Done</MenuItem>
@@ -142,7 +171,7 @@ function Todos() {
           <Select
             value={priorityFilter}
             label="Priority"
-            onChange={(e) => setPriorityFilter(e.target.value)}
+            onChange={(e) => updateFilters({ priorityFilter: e.target.value })}
           >
             <MenuItem value="">All</MenuItem>
             <MenuItem value="high">High</MenuItem>
@@ -155,7 +184,7 @@ function Todos() {
           type="date"
           size="small"
           value={dueDateFilter}
-          onChange={(e) => setDueDateFilter(e.target.value)}
+          onChange={(e) => updateFilters({ dueDateFilter: e.target.value })}
           InputLabelProps={{ shrink: true }}
           sx={{ width: "auto" }}
         />
