@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This is a React-based project utilizing a modern technology stack, including Firebase, React Router, Material UI, Vite, Zustand for state management, and various testing and development tools.
+This is a React-based project utilizing a modern technology stack, including Firebase, React Router, Material UI, Vite, Zustand for state management, and various development tools.
 
 ## Project Overview
 
