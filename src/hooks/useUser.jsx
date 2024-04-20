@@ -4,7 +4,7 @@ const useUser = () => {
   const navigate = useNavigate();
   const { user, setUser, removeUser } = userStore((state) => state);
 
-  const logout = async () => {
+  const logout = () => {
     removeUser();
     navigate("/login");
   };
