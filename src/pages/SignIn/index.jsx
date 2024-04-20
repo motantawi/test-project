@@ -3,17 +3,17 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import useUser from "../../hooks/useUser";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { loginSchema } from "../../utils/Schema";
-import { requestLogin } from "../../api/auth";
 import { IconButton, InputAdornment, TextField } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import useUser from "@hooks/useUser";
+import { loginSchema } from "@utils/Schema";
+import { requestLogin } from "@api/auth";
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);

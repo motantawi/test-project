@@ -17,8 +17,8 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
-import { createTaskSchema } from "../../../utils/Schema";
-import { deleteTask, editTask, fetchTask } from "../../../api/tasks";
+import { createTaskSchema } from "@utils/Schema";
+import { deleteTask, editTask, fetchTask } from "@api/tasks";
 
 function EditTask() {
   const { taskId } = useParams();

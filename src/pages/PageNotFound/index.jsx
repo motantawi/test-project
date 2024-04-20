@@ -2,7 +2,7 @@ import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import useUser from "../../hooks/useUser";
+import useUser from "@hooks/useUser";
 
 const PageNotFound = () => {
   const navigate = useNavigate();

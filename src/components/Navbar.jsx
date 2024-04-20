@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
 import { useLocation, useNavigate } from "react-router-dom";
-import useUser from "../hooks/useUser";
+import useUser from "@hooks/useUser";
 const Navbar = () => {
   const navigate = useNavigate();
   const { user, logout } = useUser();

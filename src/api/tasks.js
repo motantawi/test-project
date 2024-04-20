@@ -9,7 +9,7 @@ import {
   getDoc,
   addDoc,
 } from "firebase/firestore";
-import { db } from "../firebase";
+import { db } from "/src/firebase";
 
 const fetchTasks = async (userId) => {
   try {

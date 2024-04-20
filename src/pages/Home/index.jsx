@@ -9,8 +9,9 @@ import {
   Paper,
   TextField,
 } from "@mui/material";
-import Footer from "../../components/Footer";
-import useUser from "../../hooks/useUser";
+import useUser from "@hooks/useUser";
+import Footer from "@components/Footer";
+
 
 const Home = () => {
   const navigate = useNavigate();

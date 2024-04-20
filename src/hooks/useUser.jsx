@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import userStore from "../zustand/userStore";
+import userStore from "@zustand/userStore";
 const useUser = () => {
   const navigate = useNavigate();
   const { user, setUser, removeUser } = userStore((state) => state);

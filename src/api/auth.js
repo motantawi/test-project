@@ -1,4 +1,3 @@
-import { db } from "../firebase";
 import {
   addDoc,
   collection,
@@ -9,6 +8,7 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
+import { db } from "/src/firebase";
 
 const requestLogin = async ({ email, password }) => {
   try {

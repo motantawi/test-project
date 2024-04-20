@@ -11,12 +11,12 @@ import {
   Typography,
   FormHelperText,
 } from "@mui/material";
-import useUser from "../../hooks/useUser";
-import { createTaskSchema } from "../../utils/Schema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm, Controller } from "react-hook-form";
 import { toast } from "react-toastify";
-import { addTask } from "../../api/tasks";
+import useUser from "@hooks/useUser";
+import { createTaskSchema } from "@utils/Schema";
+import { addTask } from "@api/tasks";
 
 function AddTodoModal({ open, handleClose, fetchTasks }) {
   const { user } = useUser();

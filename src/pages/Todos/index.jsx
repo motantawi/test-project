@@ -12,11 +12,11 @@ import {
   MenuItem,
   Grid,
 } from "@mui/material";
-import useUser from "../../hooks/useUser";
-import AddTodoModal from "../../components/modals/AddTodoModal";
-import TaskCard from "../../components/TaskCard";
-import { deleteTask, fetchTasks, toggleTaskStatus } from "../../api/tasks";
 import queryString from "query-string";
+import { deleteTask, fetchTasks, toggleTaskStatus } from "@api/tasks";
+import useUser from "@hooks/useUser";
+import TaskCard from "@components/TaskCard";
+import AddTodoModal from "@components/modals/AddTodoModal";
 
 function Todos() {
   const { parse, stringify } = queryString;

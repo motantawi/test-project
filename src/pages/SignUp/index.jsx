@@ -9,11 +9,11 @@ import Container from "@mui/material/Container";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { createAccountSchema } from "../../utils/Schema";
-import useUser from "../../hooks/useUser";
-import { requestCreateUser } from "../../api/auth";
 import { IconButton, InputAdornment, TextField } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import useUser from "@hooks/useUser";
+import { createAccountSchema } from "@utils/Schema";
+import { requestCreateUser } from "@api/auth";
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);

@@ -8,13 +8,13 @@ import {
   InputAdornment,
   IconButton,
 } from "@mui/material";
-import { requestUpdateUserProfile } from "../../api/auth";
-import useUser from "../../hooks/useUser";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { changeUserDataSchema } from "../../utils/Schema";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import useUser from "@hooks/useUser";
+import { changeUserDataSchema } from "@utils/Schema";
+import { requestUpdateUserProfile } from "@api/auth";
 
 const Profile = () => {
   const [cantEdit, setCantEdit] = useState(true);
